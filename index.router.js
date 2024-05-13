@@ -12,4 +12,7 @@ export const bootstrap = (app, express) => {
   app.use("/learnguide", learnguide);
   app.use(asyncHandler);
   app.use(handelerror);
+  app.use("*", (req, res, next) => {
+    return res.send("404 page not found");
+  });
 };
