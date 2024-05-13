@@ -30,30 +30,22 @@ export const updatavideo = asyncHandler(async (req, res, next) => {
   if (!learnguide) {
     return next(new Error("Invalid video ID"));
   }
-
-  try {
-    const { secure_url, public_id } = await cloudinary.uploader.upload(
-      req.file.path,
-      {
-        folder: `${process.env.APP_NAME}/learnguide/video`,
-        resource_type: "video",
-      }
-    );
-
-    if (learnguide.video) {
-      await cloudinary.uploader.destroy(learnguide.video.public_id);
+  const { secure_url, public_id } = await cloudinary.uploader.upload(
+    req.file.path,
+    {
+      folder: `${process.env.APP_NAME}/learnguide/video`,
+      resource_type: "video",
     }
-
-    learnguide.video = { secure_url, public_id };
-    await learnguide.save();
-
-    res.status(200).json({
-      message: "Video updated successfully",
-      video: learnguide.video,
-    });
-  } catch (error) {
-    return next(new Error("Failed to update video"));
+  );
+  if (learnguide.video) {
+    await cloudinary.uploader.destroy(learnguide.video.public_id);
   }
+  learnguide.video = { secure_url, public_id };
+  await learnguide.save();
+  res.status(200).json({
+    message: "Video updated successfully",
+    video: learnguide.video,
+  });
 });
 
 export const allVideos = asyncHandler(async (req, res, next) => {
